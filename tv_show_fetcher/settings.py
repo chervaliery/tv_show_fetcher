@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'tv_show_fetcher.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tv_show_fetcher',
         'USER': 'root',
         'PASSWORD': '',
-        'HOST': '127.0.0.1',                     
+        'HOST': '127.0.0.1',
         'PORT': ''
     }
 }
@@ -112,3 +112,35 @@ STATICFILES_DIRS = (
 # Media file
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR + '/media/'
+
+# Tv Show Time api
+USER_ID = 
+USER_URL = "https://api.tozelabs.com/v2/user"
+USER_PARAMS = {
+    'include_shows': 1,
+    'include_lists': 0,
+    'include_airing_data': 0,
+    'include_last_seen': 0,
+    'include_for_later': 0,
+    'include_to_watch': 0
+}
+
+SHOW_URL = "https://api.tozelabs.com/v2/show"
+SHOW_PARAMS = {
+    'user_id': USER_ID,
+    'include_followers': 0,
+    'nb_followers': 0,
+    'seasons_data': 0,
+    'include_episodes': 1,
+    'nb_recommendations': 0,
+    'include_suggestions': 0,
+    'include_products': 0
+}
+
+# Selenium params
+CHROME_PREF = {
+    'download.default_directory' : '/tmp/toAdd'
+}
+
+CAPTCHA_PATH = '/tmp/img.png'
+PREFERD_RES = "720p"
