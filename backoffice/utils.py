@@ -5,6 +5,7 @@ from PIL import Image
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
+from pyvirtualdisplay import Display
 
 from models import *
 from django.conf import settings
@@ -53,6 +54,7 @@ def fetch_show(show):
 
 def download_episode(episode_list):
     resp = {}
+    display = init_display(0, (1600, 900))
     driver = init_driver()
     for episode in episode_list:
         try:
@@ -68,6 +70,11 @@ def download_episode(episode_list):
         resp[episode] = res
     driver.quit()
     return resp
+
+def init_display(visible, size):
+    display = Display(visible=visible, size=size)
+    display.start()
+    return display
 
 def init_driver():
     chromeOptions = webdriver.ChromeOptions()
