@@ -83,7 +83,8 @@ def init_display(visible, size):
 def init_driver():
     chromeOptions = webdriver.ChromeOptions()
     chromeOptions.add_experimental_option("prefs", settings.CHROME_PREF)
-
+    if settings.PROXY_SERVER:
+        chromeOptions.add_argument("--proxy-server={0}".format(settings.PROXY_SERVER))
     driver = webdriver.Chrome(chrome_options=chromeOptions)
     time.sleep(5)
     return driver

@@ -142,5 +142,6 @@ CHROME_PREF = {
     'download.default_directory' : '/tmp/toAdd'
 }
 
+PROXY_SERVER = ""
 CAPTCHA_PATH = '/tmp/img.png'
 PREFERD_RES = "720p"
