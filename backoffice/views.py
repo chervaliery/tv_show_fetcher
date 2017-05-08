@@ -1,5 +1,7 @@
-from django.shortcuts import render
 from django.http import HttpResponse
+
+from models import *
+from utils import fetch_show, get_show
 
 # Create your views here.
 

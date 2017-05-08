@@ -13,9 +13,9 @@ from django.conf import settings
 def get_show():
     final_url = "{0}/{1}/profile".format(settings.USER_URL, settings.USER_ID)
     resp = requests.get(final_url, params=settings.USER_PARAMS).json()
+    result = {}
 
     for show in resp["shows"]:
-        print show
         id = show['id']
         try:
             s = Show.objects.get(tst_id=id)
@@ -25,6 +25,7 @@ def get_show():
             s.enabled = False
         s.name = show['name']
         s.save()
+
 
 def fetch_show(show):
     final_url = "{0}/{1}/data/en".format(settings.SHOW_URL, show.tst_id)
@@ -67,6 +68,9 @@ def download_episode(episode_list):
                 time.sleep(5)
             res = lookup(driver, str(episode), settings.PREFERD_RES)
         time.sleep(5)
+        if res:
+            episode.downloaded = True
+            episode.save()
         resp[episode] = res
     driver.quit()
     return resp
