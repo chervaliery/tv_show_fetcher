@@ -1,5 +1,5 @@
 # tv_show_fetcher
 
-sudo apt-get install python-pip mysql-server python-mysqldb xvfb tesseract-ocr
+sudo apt-get install python-pip mysql-server python-mysqldb redis-server
 
-sudo pip install django selenium pytesseract Image pyvirtualdisplay
+sudo pip3 install -r requirements.txt

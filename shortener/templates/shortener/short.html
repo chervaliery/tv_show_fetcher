@@ -1,0 +1,17 @@
+{% extends "shortener/base.html" %}
+{% load static %}
+
+{% block content %} 
+
+<ul class="list-group">
+  <li class="list-group-item"><a href="{% url 'list' prev_path %}"><img style="height:2em;" src="{% static 'shortener/img/left-arrow-outline.svg' %}">&nbsp;Retour</a></li>
+  <li class="list-group-item">
+    <dl>
+      <dt>L'URL long</dt>
+      <dd><a href="{{ longurl }}">{{ longurl }}</a></dd>
+      <dt>L'URL short</dt>
+      <dd><a href="{{ shorturl }}">{{ shorturl }}</a></dd>
+    </dl>
+  </li>
+</ul>
+{% endblock %}

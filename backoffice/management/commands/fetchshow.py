@@ -12,12 +12,22 @@ class Command(BaseCommand):
             action='store_true',
             dest='all',
             default=False,
-            help='Delete poll instead of closing it',
+            help='Update all',
+        )
+
+        parser.add_argument(
+            '--enabled',
+            action='store_true',
+            dest='enabled',
+            default=False,
+            help='Update enabled',
         )
 
     def handle(self, *args, **options):
         if options['all']:
             shows = Show.objects.all()
+        elif options['enabled']:
+            shows = Show.objects.filter(enabled=True)
         else:
             shows = Show.objects.filter(pk__in=options['show_id'])
         for show in shows:

@@ -20,32 +20,34 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'h2&xl&&f%_50x24@b($$jnk0*02z_7=jkt2bg_@t$=&igk(f39'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['fetch.example.com']
 
 
 # Application definition
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
+#    'django.contrib.admin',
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'backoffice'
+    'adminplus',
+    'backoffice',
+    'shortener'
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -69,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tv_show_fetcher.wsgi.application'
+#WSGI_APPLICATION = 'tv_show_fetcher.wsgi.application'
 
 
 # Database
@@ -79,13 +81,20 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tv_show_fetcher',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'tv_show_fetcher',
+        'PASSWORD': 'tv_show_fetcher',
         'HOST': '127.0.0.1',
         'PORT': ''
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
+        'TIMEOUT': 3600,
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -114,8 +123,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR + '/media/'
 
 # Tv Show Time api
-USER_ID = 
-USER_URL = "https://api.tozelabs.com/v2/user"
+USER_ID = ''
+USER_URL = 'https://api2.tozelabs.com/v2/user'
 USER_PARAMS = {
     'include_shows': 1,
     'include_lists': 0,
@@ -125,7 +134,7 @@ USER_PARAMS = {
     'include_to_watch': 0
 }
 
-SHOW_URL = "https://api.tozelabs.com/v2/show"
+SHOW_URL = 'https://api2.tozelabs.com/v2/show'
 SHOW_PARAMS = {
     'user_id': USER_ID,
     'include_followers': 0,
@@ -137,11 +146,31 @@ SHOW_PARAMS = {
     'include_products': 0
 }
 
-# Selenium params
-CHROME_PREF = {
-    'download.default_directory' : '/tmp/toAdd'
+REQUESTS_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'
 }
 
-PROXY_SERVER = ""
-CAPTCHA_PATH = '/tmp/img.png'
-PREFERD_RES = "720p"
+MAILJET_API_KEY = ''
+MAILJET_API_SECRET = ''
+
+FROM_EMAIL = 'from@example.com'
+TO_EMAIL = ['to@example.com']
+
+TEMP_DIR = '/tmp/deluge'
+TO_ADD = '/var/lib/deluge/toAdd'
+PREFERD_RES = '1080p'
+PREFERD_LANG = 'MULTi'
+
+YGG_PATH = 'https://yggapi.eu'
+YGG_PASSKEY = ''
+
+OC_SERVER = 'https://owncloud.com'
+OC_USER = 'user'
+OC_PASSWORD = 'password'
+OC_PATH = 'Local'
+
+YOURLS_ENDPOINT = 'https://yourls.com'
+YOURLS_SIGNATURE = ''
+
+if not os.path.exists(TEMP_DIR):
+    os.makedirs(TEMP_DIR)

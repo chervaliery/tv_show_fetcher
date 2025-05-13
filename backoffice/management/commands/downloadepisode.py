@@ -1,3 +1,4 @@
+import datetime
 from django.core.management.base import BaseCommand, CommandError
 from backoffice.utils import download_episode
 from backoffice.models import Episode
@@ -17,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['to-watch']:
-            episode_list = Episode.objects.filter(show__enabled=True, watched=False, downloaded=False, aired=True)
+            episode_list = Episode.objects.filter(show__enabled=True, watched=False, downloaded=False, aired=True, date__lte=datetime.date.today())
         else:
             episode_list = Episode.objects.filter(pk__in=options['episode_id'])
         download_episode(episode_list)

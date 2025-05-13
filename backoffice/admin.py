@@ -1,8 +1,12 @@
 from django.contrib import admin
 from django.contrib import messages
-from models import *
+from django.shortcuts import redirect
+from django.urls import reverse
 
-from utils import fetch_show, get_show, download_episode
+from backoffice.models import *
+from backoffice.utils import fetch_show, get_show, download_episode
+
+import datetime
 
 # Register your models here.
 
@@ -46,7 +50,7 @@ class ShowAdmin(admin.ModelAdmin):
 class EpisodeAdmin(admin.ModelAdmin):
     model = Episode
     list_display = ('tst_id', 'name', 'get_show', 'season', 'number', 'date', 'aired', 'watched', 'downloaded')
-    list_filter = ('show__name', 'season', 'aired', 'downloaded', 'watched')
+    list_filter = ('show__name', 'season', 'aired', 'downloaded', 'watched', 'show__enabled')
     ordering = ('-date',)
     actions = [download_episodes, mark_downloaded]
 
@@ -54,6 +58,29 @@ class EpisodeAdmin(admin.ModelAdmin):
         return obj.show.name
 
     get_show.short_description = 'Show'
+
+# Custom view
+@admin.site.register_view('list_to_download', urlname='list_to_download', name='List the "to download" episodes')
+def list_to_download_action(request):
+    return redirect('/admin/backoffice/episode/?aired__exact=1&downloaded__exact=0&show__enabled__exact=1&watched__exact=0')
+
+@admin.site.register_view('fetch_show', urlname='fetch_show', name='Fetch the enabled shows')
+def fetch_show_action(request):
+    for s in Show.objects.filter(enabled=True):
+        fetch_show(s)
+    return redirect('/admin')
+
+@admin.site.register_view('get_show', urlname='get_show', name='Get the shows')
+def get_show_action(request):
+    get_show()
+    return redirect('/admin')
+
+@admin.site.register_view('download_episode', urlname='download_episode', name='Download the "to download" episodes')
+def download_episode_action(request):
+    episode_list = Episode.objects.filter(show__enabled=True, watched=False, downloaded=False, aired=True, date__lte=datetime.date.today())
+    res = download_episode(episode_list)
+    messages.success(request, res)
+    return redirect('/admin')
 
 admin.site.register(Show, ShowAdmin)
 admin.site.register(Episode, EpisodeAdmin)
