@@ -1,0 +1,29 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'shortener/css/bootstrap.min.css' %}">
+    <style>
+      body { 
+        font-size: 200%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+      {% block content %} 
+      {% endblock %}
+      </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{% static 'shortener/js/jquery-3.2.1.slim.min.js' %}"></script>
+    <script src="{% static 'shortener/js/popper.min.js' %}"></script>
+    <script src="{% static 'shortener/js/bootstrap.min.js' %}"></script>
+  </body>
+</html>

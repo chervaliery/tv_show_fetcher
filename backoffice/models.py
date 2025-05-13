@@ -10,6 +10,9 @@ class Show(models.Model):
     def __unicode__(self):
         return "{0}".format(self.name)
 
+    def __str__(self):
+        return "{0}".format(self.name)
+
 
 class Episode(models.Model):
     name = models.CharField(max_length=255, blank=True)
@@ -25,3 +28,7 @@ class Episode(models.Model):
 
     def __unicode__(self):
         return "{0} S{1:02d}E{2:02d}".format(self.show.name, self.season, self.number)
+
+    def __str__(self):
+        return "{0} S{1:02d}E{2:02d}".format(self.show.name, self.season, self.number)
+

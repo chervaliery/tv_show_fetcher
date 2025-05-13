@@ -8,9 +8,12 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
 import os
+import sys
+
+sys.path.append('/var/www/tv_show_fetcher')
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tv_show_fetcher.settings")
+os.environ["DJANGO_SETTINGS_MODULE"] = "tv_show_fetcher.settings"
 
 application = get_wsgi_application()

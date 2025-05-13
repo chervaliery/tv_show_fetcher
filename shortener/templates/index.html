@@ -1,0 +1,9 @@
+{% if list_of_files %}
+    <ul>
+    {% for file in list_of_files %}
+        <li>{{ file.path }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Files are available.</p>
+{% endif %}

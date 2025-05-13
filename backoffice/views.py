@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 
-from models import *
-from utils import fetch_show, get_show
+from backoffice.models import *
+from backoffice.utils import fetch_show, get_show
 
 # Create your views here.
 

@@ -13,11 +13,18 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import include, url
+from django.urls import include, path
 from django.contrib import admin
+from adminplus.sites import AdminSitePlus
 from backoffice.views import home
+from shortener import urls as shortener_urls
+
+admin.site = AdminSitePlus()
+#admin.sites.site = admin.site # extra line
+admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', home , name='home'),
+    path('admin/', admin.site.urls),
+    path('short/', include(shortener_urls)),
+    path('', home , name='home'),
 ]
