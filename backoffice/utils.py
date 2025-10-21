@@ -1,8 +1,10 @@
 import datetime
 import logging
+import os
 import re
 import secrets
 import string
+import unicodedata
 import requests
 import torrent_parser
 
@@ -110,13 +112,11 @@ def download_by_url(url):
 
     last_part = urlparse(url).path.split('/')[-1]
     match = re.search(r'\d+', last_part)
-    print(match)
     if not match:
         return resp
 
     text = "Hello,\nI proudly download:\n"
     torrent_id = match.group()
-    print(torrent_id)
     res = lookup(
         settings.YGG_PATH,
         "blop",
@@ -125,7 +125,6 @@ def download_by_url(url):
         settings.PREFERD_LANG,
         settings.PREFERD_RES,
         torrent_id)
-    print(res)
     text += ' * ' + str(res) + ": " + str(bool(res)) + "\r\n"
     resp[str(res)] = bool(res)
     send_mail(
@@ -138,7 +137,9 @@ def download_by_url(url):
 
 
 def lookup(path, name, passkey, toAdd, language, resolution, torrent_id=None):
-    if not torrent_id:
+    if torrent_id:
+        torrent = requests.get(f'{path}/torrent/{torrent_id}').json()
+    else:
         # Search Torrent
         params = {
             'q': f'{name} {language} {resolution}',
@@ -170,20 +171,22 @@ def lookup(path, name, passkey, toAdd, language, resolution, torrent_id=None):
                 torrent_id = torrent['id']
                 break
 
-    if torrent_id:
+    if torrent_id and torrent:
+        title = safe_filename(torrent['title'])
         # Download and save fake torrent file
         fake_pass = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
 
         params = {'passkey': fake_pass}
         response = requests.get(f'{path}/torrent/{torrent_id}/download', params=params, stream=True)
-        with open(f"{settings.TEMP_DIR}/{torrent['title']}.torrent", 'wb') as file:
+        os.makedirs(settings.TEMP_DIR, exist_ok=True)
+        with open(f"{settings.TEMP_DIR}/{title}.torrent", 'wb') as file:
             for chunk in response.iter_content(1024):
                 file.write(chunk)
         # Open and edit with right passkey
-        data = torrent_parser.parse_torrent_file(f"{settings.TEMP_DIR}/{torrent['title']}.torrent")
+        data = torrent_parser.parse_torrent_file(f"{settings.TEMP_DIR}/{title}.torrent")
         data['announce'] = data['announce'].replace(fake_pass, passkey)
-        torrent_parser.create_torrent_file(f"{toAdd}/{torrent['title']}.torrent", data)
-        return torrent['title']
+        torrent_parser.create_torrent_file(f"{toAdd}/{title}.torrent", data)
+        return title
     return False
 
 
@@ -266,3 +269,12 @@ def send_mail(subject, body, from_email, to_email):
         ]
     }
     return mailjet.send.create(data=data)
+
+
+def safe_filename(name):
+    # Normalize and remove accents
+    nfkd = unicodedata.normalize("NFKD", name)
+    name = "".join([c for c in nfkd if not unicodedata.combining(c)])
+    # Remove unsafe characters
+    name = re.sub(r'[^a-zA-Z0-9._\-]', '_', name)
+    return name
