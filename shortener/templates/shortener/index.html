@@ -2,9 +2,6 @@
 {% block content %}
 {% load static %}
 <ul class="list-group" >
-{% if prev_path %}
-<li class="list-group-item"><div class="alert alert-light" role="alert"><a href="{% url 'list' prev_path %}"><img style="height:2em;" src="{% static 'shortener/img/left-arrow-outline.svg' %}">&nbsp;{{ prev_path }}</a></div></li>
-{% endif %}
 {% for file in list_of_files %}
 <li class="list-group-item">
     <form class="form-inline" action="{% url 'shorten' %}" method="post">
@@ -15,7 +12,7 @@
     <img style="height:2em;" src="{% static 'shortener/img/file.svg' %}">&nbsp;{{ file.path }}
     {% endif %}
     </div>
-    {% if 'short' in file.attributes %}<div class="alert alert-secondary" role="alert"><a href={{ file.attributes.short }}>{{ file.attributes.short }}</a> <a href="{% url 'delete' keyword=file.attributes.keyword %}"><img style="height:2em;" src="{% static 'shortener/img/rubbish-bin.svg' %}"></a></div>{% else %}<div class="alert alert-light" role="alert">{% csrf_token %}<input type="hidden" name="path" value="{{ file.path }}"><input type="string" name="txt" size="4" class="form-control mb-1 mr-sm-1"><button type="submit" class="btn btn-primary mb-2">Shorten me</button></div>{% endif %}</form></li>
+    {% if 'short' in file.attributes %}<div class="alert alert-secondary" role="alert"><a href={{ file.attributes.short }}>{{ file.attributes.short }}</a><a href="{% url 'delete' keyword=file.attributes.keyword %}?path={{ file.path|urlencode }}"><img style="height:2em;" src="{% static 'shortener/img/rubbish-bin.svg' %}"></a></div>{% else %}<div class="alert alert-light" role="alert">{% csrf_token %}<input type="hidden" name="path" value="{{ file.path }}"><input type="string" name="txt" size="4" class="form-control mb-1 mr-sm-1"><button type="submit" class="btn btn-primary mb-2">Shorten me</button></div>{% endif %}</form></li>
 {% endfor %}
 </ul>
 {% endblock %}
