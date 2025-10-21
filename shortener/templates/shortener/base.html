@@ -11,10 +11,37 @@
       body { 
         font-size: 200%;
       }
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1em 0;
+      }
+      .refresh-btn img {
+        height: 1.8em;
+        vertical-align: middle;
+      }
     </style>
   </head>
   <body>
     <div class="container-fluid">
+
+      <!-- 🔄 Top bar with back and refresh buttons -->
+      <div class="top-bar">
+        <div>
+          {% if prev_path %}
+          <a href="{% url 'list' prev_path %}" class="btn btn-light">
+            <img src="{% static 'shortener/img/left-arrow-outline.svg' %}" style="height:1.8em;"> Back
+          </a>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 🔁 Refresh button -->
+          <a href="{% url 'refresh_with_path' path %}" class="btn btn-secondary refresh-btn">
+            <img src="{% static 'shortener/img/refresh.svg' %}" alt="refresh icon"> Refresh
+          </a>
+        </div>
+      </div>
       <div class="row">
       {% block content %} 
       {% endblock %}

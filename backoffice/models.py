@@ -1,34 +1,25 @@
 from django.db import models
-from django.utils import timezone
 
 
 class Show(models.Model):
     name = models.CharField(max_length=255)
     tst_id = models.IntegerField(primary_key=True)
-    enabled = models.BooleanField()
-
-    def __unicode__(self):
-        return "{0}".format(self.name)
+    enabled = models.BooleanField(default=False)
 
     def __str__(self):
-        return "{0}".format(self.name)
+        return f"{self.name}"
 
 
 class Episode(models.Model):
     name = models.CharField(max_length=255, blank=True)
-    date = models.DateField(default=timezone.now, blank=True)
+    date = models.DateField(null=True)
     number = models.IntegerField()
     show = models.ForeignKey('Show', on_delete=models.CASCADE)
     season = models.IntegerField()
     tst_id = models.IntegerField(primary_key=True)
     aired = models.BooleanField()
-    downloaded = models.BooleanField()
+    downloaded = models.BooleanField(default=False)
     watched = models.BooleanField()
-    path = models.CharField(max_length=255, blank=True)
-
-    def __unicode__(self):
-        return "{0} S{1:02d}E{2:02d}".format(self.show.name, self.season, self.number)
 
     def __str__(self):
-        return "{0} S{1:02d}E{2:02d}".format(self.show.name, self.season, self.number)
-
+        return f"{self.show.name} S{self.season:02d}E{self.number:02d}"
