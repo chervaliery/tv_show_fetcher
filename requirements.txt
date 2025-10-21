@@ -1,6 +1,7 @@
 Django==5.2.7
 django-adminplus==0.6
 mailjet-rest==1.5.1
+mysqlclient==2.2.7
 pyocclient==0.6
 requests==2.32.5
 torrent-parser==0.4.1
