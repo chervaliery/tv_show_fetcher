@@ -127,6 +127,7 @@ def refresh_view(request, path=settings.OC_PATH):
 
 # ---------------------- helpers ---------------------- #
 
+
 def _cache_key_for_path(path: str) -> str:
     """Generate cache key for a given OwnCloud path."""
     return f"owncloud_list::{path.rstrip('/')}"
