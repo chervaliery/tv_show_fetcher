@@ -1,6 +1,6 @@
 # File with password
 tv_show_fetcher/settings.py
-
+static/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
