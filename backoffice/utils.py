@@ -128,12 +128,12 @@ def download_by_urls(urls):
             torrent_id)
         text += ' * ' + str(res) + ": " + str(bool(res)) + "\r\n"
         resp[str(res)] = bool(res)
-        send_mail(
-            'Download resum',
-            text,
-            settings.FROM_EMAIL,
-            settings.TO_EMAIL
-        )
+    send_mail(
+        'Download resum',
+        text,
+        settings.FROM_EMAIL,
+        settings.TO_EMAIL
+    )
     return resp
 
 
