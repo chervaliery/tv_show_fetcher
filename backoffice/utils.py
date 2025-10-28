@@ -142,28 +142,20 @@ def lookup(path, name, passkey, toAdd, language, resolution, torrent_id=None):
         torrent = requests.get(f'{path}/torrent/{torrent_id}').json()
     else:
         # Search Torrent
-        params = {
-            'q': f'{name} {language} {resolution}',
-            'order_by': 'downloads'
-        }
+        search_queries = [
+            f"{name} {language} {resolution}",
+            f"{name} {language}",
+            f"{name} {resolution}",
+            f"{name}"
+        ]
 
-        torrents = requests.get(f'{path}/torrents', params=params).json()
-
-        if not torrents:
-            params = {
-                'q': f'{name} {language}',
-                'order_by': 'downloads'
-            }
-
+        torrents = None
+        for query in search_queries:
+            params = {'q': query, 'order_by': 'downloads'}
             torrents = requests.get(f'{path}/torrents', params=params).json()
 
-        if not torrents:
-            params = {
-                'q': f'{name}',
-                'order_by': 'downloads'
-            }
-
-            torrents = requests.get(f'{path}/torrents', params=params).json()
+            if torrents:  # Stop when we find results
+                break
 
         # Get the ID
         torrent_id = None
