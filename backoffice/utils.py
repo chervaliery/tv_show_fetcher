@@ -10,6 +10,7 @@ import torrent_parser
 
 from backoffice.models import Show, Episode
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_str
@@ -107,32 +108,32 @@ def download_episode(episode_list):
     return resp
 
 
-def download_by_url(url):
+def download_by_urls(urls):
     resp = {}
+    for url in urls:
+        last_part = urlparse(url).path.split('/')[-1]
+        match = re.search(r'\d+', last_part)
+        if not match:
+            return resp
 
-    last_part = urlparse(url).path.split('/')[-1]
-    match = re.search(r'\d+', last_part)
-    if not match:
-        return resp
-
-    text = "Hello,\nI proudly download:\n"
-    torrent_id = match.group()
-    res = lookup(
-        settings.YGG_PATH,
-        "blop",
-        settings.YGG_PASSKEY,
-        settings.TO_ADD,
-        settings.PREFERD_LANG,
-        settings.PREFERD_RES,
-        torrent_id)
-    text += ' * ' + str(res) + ": " + str(bool(res)) + "\r\n"
-    resp[str(res)] = bool(res)
-    send_mail(
-        'Download resum',
-        text,
-        settings.FROM_EMAIL,
-        settings.TO_EMAIL
-    )
+        text = "Hello,\nI proudly download:\n"
+        torrent_id = match.group()
+        res = lookup(
+            settings.YGG_PATH,
+            "blop",
+            settings.YGG_PASSKEY,
+            settings.TO_ADD,
+            settings.PREFERD_LANG,
+            settings.PREFERD_RES,
+            torrent_id)
+        text += ' * ' + str(res) + ": " + str(bool(res)) + "\r\n"
+        resp[str(res)] = bool(res)
+        send_mail(
+            'Download resum',
+            text,
+            settings.FROM_EMAIL,
+            settings.TO_EMAIL
+        )
     return resp
 
 
@@ -278,3 +279,11 @@ def safe_filename(name):
     # Remove unsafe characters
     name = re.sub(r'[^a-zA-Z0-9._\-]', '_', name)
     return name
+
+
+def print_messages(request, resp):
+    for name, result in resp.items():
+        if result:
+            messages.info(request, f"{name}: {result}")
+        else:
+            messages.error(request, f"{name}: {result}")

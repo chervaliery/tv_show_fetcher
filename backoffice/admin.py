@@ -1,12 +1,13 @@
 import datetime
+import json
 
 from adminplus.sites import AdminSitePlus
-from django.contrib import admin, messages
+from django.contrib import admin
 from django.shortcuts import render, redirect
 from django import forms
 
 from .models import Show, Episode
-from .utils import fetch_show, download_episode, download_by_url, get_shows
+from .utils import fetch_show, download_episode, download_by_urls, get_shows, print_messages
 
 # Use AdminSitePlus instead of default admin
 admin_site = AdminSitePlus(name='backoffice')
@@ -38,8 +39,8 @@ def mark_downloaded_action(modeladmin, request, queryset):
 
 @admin.action(description="Download Episodes")
 def download_episodes_action(modeladmin, request, queryset):
-    res = download_episode(queryset.all())
-    messages.success(request, res)
+    resp = download_episode(queryset.all())
+    print_messages(request, resp)
 
 
 # Admin Classes
@@ -103,8 +104,8 @@ def download_episode_action(request):
         downloaded=False,
         aired=True,
         date__lte=datetime.date.today())
-    res = download_episode(episode_list)
-    messages.success(request, res)
+    resp = download_episode(episode_list)
+    print_messages(request, resp)
     return redirect('/admin')
 
 
@@ -113,29 +114,28 @@ def download_episode_action(request):
 # ------------------------------
 
 # Define a simple form
-class UrlForm(forms.Form):
-    url = forms.CharField(max_length=256)
+class UrlListForm(forms.Form):
+    urls = forms.CharField(widget=forms.HiddenInput(), required=False)
 
 
 @admin_site.register_view('download-url/', 'Download by URL')
 def download_url(request):
-    submitted = False
-    resp = {}
     if request.method == 'POST':
-        form = UrlForm(request.POST)
+        form = UrlListForm(request.POST)
         if form.is_valid():
-            # Do something with the data
-            resp = download_by_url(form.cleaned_data["url"])
-            submitted = True
-    else:
-        form = UrlForm()
+            try:
+                urls = json.loads(form.cleaned_data["urls"]) or []
+            except json.JSONDecodeError:
+                urls = []
 
-    context = {
-        'form': form,
-        'submitted': submitted,
-        'resp': resp
-    }
-    return render(request, 'admin/download_url.html', context)
+            resp = download_by_urls(urls)
+            print_messages(request, resp)
+
+            return render(request, 'admin/download_url.html', {'form': UrlListForm()})
+    else:
+        form = UrlListForm()
+
+    return render(request, 'admin/download_url.html', {'form': form})
 
 
 # Register Admin views
