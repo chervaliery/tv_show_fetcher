@@ -3,13 +3,49 @@
 {% block content %}
 <h1>Download by URL</h1>
 
-{% if submitted %}
-    <p style="color: green;">{{ resp }}</p>
-{% endif %}
+<form id="urlForm" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div id="urlInputs">
+    <div class="url-field" style="margin-bottom: 6px;">
+      <input type="text" name="url" placeholder="Enter URL" style="width: 60%;" />
+      <a href="javascript:void(0);" class="deletelink" onclick="removeField(this)">
+        Remove
+      </a>
+    </div>
+  </div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
+  <a href="javascript:void(0);" id="addBtn" class="addlink">
+    Add another URL
+  </a>
+
+  <br><br>
+  <button type="submit" class="default">Submit</button>
 </form>
+
+<script>
+document.getElementById("addBtn").addEventListener("click", function() {
+    const div = document.createElement("div");
+    div.className = "url-field";
+    div.style.marginBottom = "6px";
+    div.innerHTML = `
+        <input type="text" name="url" placeholder="Enter URL" style="width: 60%;" />
+        <a href="javascript:void(0);" class="deletelink" onclick="removeField(this)">
+            Remove
+        </a>
+    `;
+    document.getElementById("urlInputs").appendChild(div);
+});
+
+function removeField(btn) {
+    btn.parentElement.remove();
+}
+
+document.getElementById("urlForm").addEventListener("submit", function(e) {
+    const urls = Array.from(document.querySelectorAll('input[name="url"]'))
+                      .map(i => i.value)
+                      .filter(v => v.trim() !== '');
+    document.querySelector('input[name="urls"]').value = JSON.stringify(urls);
+});
+</script>
 {% endblock %}
