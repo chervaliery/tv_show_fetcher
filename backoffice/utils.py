@@ -110,13 +110,13 @@ def download_episode(episode_list):
 
 def download_by_urls(urls):
     resp = {}
+    text = "Hello,\nI proudly download:\n"
     for url in urls:
         last_part = urlparse(url).path.split('/')[-1]
         match = re.search(r'\d+', last_part)
         if not match:
             return resp
 
-        text = "Hello,\nI proudly download:\n"
         torrent_id = match.group()
         res = lookup(
             settings.YGG_PATH,
