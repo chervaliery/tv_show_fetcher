@@ -4,5 +4,5 @@ from backoffice.views import home_view
 
 urlpatterns = [
     path('admin/', admin_site.urls),
-    path('', home_view, name='home'),
+    path('', home_view, name='home')
 ]
